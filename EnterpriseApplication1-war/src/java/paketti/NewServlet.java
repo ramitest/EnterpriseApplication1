@@ -11,6 +11,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
+import java.util.*;
 
 /**
  *
@@ -29,21 +31,35 @@ public class NewServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+
+        Enumeration paramNames = request.getParameterNames();
+        JSONObject obj = new JSONObject();
+        
+        while(paramNames.hasMoreElements()) {
+            String paramName = (String)paramNames.nextElement();
+            String[] paramValues = request.getParameterValues(paramName);
+            if (paramValues == null) {
+                obj.put(paramName, "");
+           } else if (paramValues.length == 1) {
+                String paramValue = paramValues[0];
+                obj.put(paramName, paramValue);
+           } else
+                for(int i=0; i < paramValues.length; i++)
+                     obj.put(paramName+i, paramValues[i]);
+        }
+        
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet NewServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet NewServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+//            obj.put("name", "foo");
+//            obj.put("num", new Integer(100));
+//            obj.put("balance", new Double(1000.21));
+//            obj.put("is_vip", new Boolean(true));
+            out.println(obj);
         }
     }
 
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
