@@ -24,18 +24,18 @@ public class NewServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-        
-//        Enumeration paramNames = request.getParameterNames();
-        
+
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            
             String pathInfo = request.getPathInfo();
-            pathInfo = pathInfo.toLowerCase();
-            if(pathInfo.equals("/getimagedirs"))
-                out.println( FileReader.getSubPathsOfPicsDirs() );
-            else if(pathInfo.equals("/getdirimages"))
-                out.println(FileReader.getPicsFromDir(request.getParameter("directory"), false));
+            switch ( pathInfo.toLowerCase() ) {
+                case "/getimagedirs":
+                    out.println( FileReader.getSubPathsOfPicsDirs() );
+                    break;
+                case "/getdirimages":
+                    String dir = request.getParameter("directory");
+                    out.println(FileReader.getPicsFromDir(dir, false));
+                    break;
+            }
         }
     }
 
