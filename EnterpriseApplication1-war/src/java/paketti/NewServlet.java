@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package paketti;
 
 import java.io.IOException;
@@ -13,11 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import java.util.*;
+import org.json.simple.JSONArray;
 
-/**
- *
- * @author maunusam
- */
 public class NewServlet extends HttpServlet {
 
     /**
@@ -32,30 +24,18 @@ public class NewServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json;charset=UTF-8");
-
-        Enumeration paramNames = request.getParameterNames();
-        JSONObject obj = new JSONObject();
         
-        while(paramNames.hasMoreElements()) {
-            String paramName = (String)paramNames.nextElement();
-            String[] paramValues = request.getParameterValues(paramName);
-            if (paramValues == null) {
-                obj.put(paramName, "");
-           } else if (paramValues.length == 1) {
-                String paramValue = paramValues[0];
-                obj.put(paramName, paramValue);
-           } else
-                for(int i=0; i < paramValues.length; i++)
-                     obj.put(paramName+i, paramValues[i]);
-        }
+//        Enumeration paramNames = request.getParameterNames();
         
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-//            obj.put("name", "foo");
-//            obj.put("num", new Integer(100));
-//            obj.put("balance", new Double(1000.21));
-//            obj.put("is_vip", new Boolean(true));
-            out.println(obj);
+            
+            String pathInfo = request.getPathInfo();
+            pathInfo = pathInfo.toLowerCase();
+            if(pathInfo.equals("/getimagedirs"))
+                out.println( FileReader.getSubPathsOfPicsDirs() );
+            else if(pathInfo.equals("/getdirimages"))
+                out.println(FileReader.getPicsFromDir(request.getParameter("directory"), false));
         }
     }
 
