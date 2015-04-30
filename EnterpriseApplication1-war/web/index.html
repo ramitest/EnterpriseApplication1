@@ -23,6 +23,10 @@
                 margin-left: auto;
                 margin-right: auto;
             }
+            ul.dropdown-menu {
+                background-color: black;
+                color: yellow;
+            }
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/main.css">
@@ -36,18 +40,35 @@
     <nav  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
+            <a class="navbar-brand" href="#" id="headeri">Media</a>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mediamenus">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span> 
             </button>
-            <a class="navbar-brand" href="#" id="headeri">Pictures</a>
         </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
+        <div class="collapse navbar-collapse" id="mediamenus">
             <ul class="nav navbar-nav">
-              <li class="active navig"><a href="#">Pictures</a></li>
-              <li class="navig"><a href="#">Videos</a></li>
-              <li class="navig"><a href="#">P</a></li>
+                <li id="pics_navig" class="active navig"><a href="#">Pictures</a></li>
+                <li id="pics_navig_dd" class="dropdown navig hidden">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Pictures
+                    <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li class="pic_selection"><a href="#">aaahh</a></li>
+                    </ul>
+                </li>
+              
+                <li class="navig hidden"><a href="#">Videos</a></li>
+                <li class="dropdown navig">
+                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Videos
+                  <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    <li class="pic_selection"><a href="#">Page 1-1</a></li>
+<!--                    <li><a href="#">Page 1-2</a></li>
+                    <li><a href="#">Page 1-3</a></li> -->
+                  </ul>
+                </li>
+              
             </ul>
         </div>
       </div>
@@ -59,10 +80,13 @@
           <img id="BigPic1" class="centerri img-responsive img-rounded">
         </div>
         <div id="piclist" class="col-xs-2">
-            <img style="padding-bottom: 5px" id="pic1" src="#" class="img-responsive img-rounded">
-            <img style="padding-bottom: 5px" id="pic2" src="#" class="img-responsive img-rounded">
-            <img style="padding-bottom: 5px" id="pic3" src="#" class="img-responsive img-rounded">
-            <img style="padding-bottom: 5px" id="pic4" src="#" class="img-responsive img-rounded">
+            <img style="padding-bottom: 5px" id="pic1" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic2" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic3" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic4" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic5" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic6" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic7" src="#" class="img-responsive img-rounded hidden">
         </div>
 <!--        <div id="tuners" class="col-xs-1">
             <button type="button" class="centerri btn btn-info btn-sm" >Button</button>
@@ -74,8 +98,12 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.js"><\/script>')</script>
         <script>
+            var NBR_OF_VISIBLE_PICS = 7;
+            
             $(document).ready(function(){
+                deployPics(picArray);
                 screenResized();
+                updateDropdownMenus();
             });
             var bigImg = null;
             var picsText = '{"pics":[' +
@@ -84,19 +112,16 @@
                 '{"src":"img/depositphotos_4003251-Woman-guitarist.jpg","width":"1024","height":"1024" },' +
                 '{"src":"img/blonde woman.jpg","width":"465","height":"700" }]}';
 
+            var picArrayTemp = JSON.parse(picsText);
+            var picArray = picArrayTemp.pics;
+            var scrollPos = 0;
+            
             function getPicObj(str) {
                 for(obj in picArray)
                     if(picArray[obj].src === str)
                         return picArray[obj];
             }
 
-            picArrayTemp = JSON.parse(picsText);
-            picArray = picArrayTemp.pics;
-            var scrollPos = 0;
-            $("#pic1").attr("src", picArray[0].src);
-            $("#pic2").attr("src", picArray[1].src);
-            $("#pic3").attr("src", picArray[2].src);
-            $("#pic4").attr("src", picArray[3].src);
             
             $('body').bind('mousewheel', function(e){
                 if(e.originalEvent.wheelDelta /120 < 0)
@@ -104,21 +129,45 @@
                 else
                     picsUp()
             });
+            
             $("img").click(function(){
                 var src = $(this).attr("src");
                 bigImg = getPicObj(src);
                 screenResized()
             });
+    
             $(".navig").click(function(){
                 $(".active.navig").removeClass("active");
                 $(this).addClass("active");
             });
+
             $( "body" ).keydown(function( event ) {
               if ( event.which == 33 || event.which == 38 )
                  picsUp();
               if ( event.which == 34 || event.which == 40 )
                  picsDown();
             });
+            
+            function itemSelected(str) {
+                $.ajax({
+                    url: "NewServlet/getdirimages",
+                    type: "get",
+                    data:{directory:  str.trim()},
+                    dataType: 'json',
+                    success: function(data) {
+//{"src":"http:\/\/localhost:8080\/imgviewer\/pics\/pics01\/JADED.jpg","width":600,"height":535}
+                        if(data.length > 0) {
+                            picArray = data;
+                            deployPics(data);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert("error");
+                        alert(xhr);
+                    }
+                });                
+            }
+            
             $(window).resize(function() {screenResized()});
         </script>
         <script>
@@ -126,23 +175,65 @@
                 scrollPos++;
                 if(scrollPos >= picArray.length)
                     scrollPos = 0;
-                $("#pic1").attr("src", picArray[((scrollPos)%picArray.length)].src);
-                $("#pic2").attr("src", picArray[((scrollPos+1)%picArray.length)].src);
-                $("#pic3").attr("src", picArray[((scrollPos+2)%picArray.length)].src);
-                $("#pic4").attr("src", picArray[((scrollPos+3)%picArray.length)].src);
+                scrollPics(scrollPos);
             }
             function picsUp() {
                 scrollPos--;
                 if(scrollPos < 0)
                     scrollPos = picArray.length-1;
-                $("#pic1").attr("src", picArray[((scrollPos)%picArray.length)].src);
-                $("#pic2").attr("src", picArray[((scrollPos+1)%picArray.length)].src);
-                $("#pic3").attr("src", picArray[((scrollPos+2)%picArray.length)].src);
-                $("#pic4").attr("src", picArray[((scrollPos+3)%picArray.length)].src);
+                scrollPics(scrollPos);
             }
+            
+            function scrollPics(scrollPosition) {
+                var x = 1;
+                for(;x<=picArray.length;x++)
+                    if(x<=NBR_OF_VISIBLE_PICS)
+                        $("#pic"+x).attr("src", picArray[((scrollPosition+(x-1))%picArray.length)].src);
+            }
+            
+            function deployPics(jsonData) {
+                hideAllSidePics();
+                for (x in jsonData) {
+                    var pic = jsonData[x];
+                    var aa = parseInt(x,10)+1;
+                    if(aa > NBR_OF_VISIBLE_PICS)
+                        break;
+                    $("#pic"+aa).attr("src", pic.src);
+                    $("#pic"+aa).removeClass("hidden");
+                }
+            }
+            
+            function hideAllSidePics() {
+                var x = 1;
+                for(;x<=NBR_OF_VISIBLE_PICS;x++)
+                    $("#pic"+x).addClass("hidden");
+            }
+            
         </script>
             
         <script>
+            function updateDropdownMenus() {
+                $.get( "NewServlet/getimagedirs", function( data ) {
+                    if(data.length > 0) {
+                        $("#pics_navig").addClass("hidden");
+                        $("#pics_navig_dd").removeClass("hidden");
+                        $("#pics_navig_dd > ul").children().remove();
+                        var x;
+                        for (x in data) {
+                            var str = data[x];
+                            var name = str.slice(str.lastIndexOf('/')+1,str.length);
+                            $("#pics_navig_dd > ul").append(
+                                    " <li onclick=\"itemSelected('"+str+" ')\" dirpath=\"" + str + "\" class=\"pic_selection\"><a href=\"#\">" + name +"</a></li>")
+                        }
+                    }
+                    else{
+                        $("#pics_navig").removeClass("hidden");
+                        $("#pics_navig_dd").addClass("hidden");
+                    }
+                }, "json");
+            }
+            
+            
             function screenResized() {
                 if(bigImg == null) {
                     bigImg = picArray[0];
@@ -196,5 +287,17 @@
             <img id="a3" src="img/images.jpg" class="img-responsive img-rounded">
           </div>
         </div>
-    </div>-->
+    </div>
+
+//            $("#pic1").attr("src", picArray[0].src);
+//            $("#pic1").removeClass("hidden");
+//            $("#pic2").attr("src", picArray[1].src);
+//            $("#pic2").removeClass("hidden");
+//            $("#pic3").attr("src", picArray[2].src);
+//            $("#pic3").removeClass("hidden");
+//            $("#pic4").attr("src", picArray[3].src);
+//            $("#pic4").removeClass("hidden");
+
+
+-->
 
