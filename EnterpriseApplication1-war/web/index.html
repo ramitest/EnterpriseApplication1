@@ -80,13 +80,13 @@
           <img id="BigPic1" class="centerri img-responsive img-rounded">
         </div>
         <div id="piclist" class="col-xs-2">
-            <img style="padding-bottom: 5px" id="pic1" src="#" class="img-responsive img-rounded hidden">
-            <img style="padding-bottom: 5px" id="pic2" src="#" class="img-responsive img-rounded hidden">
-            <img style="padding-bottom: 5px" id="pic3" src="#" class="img-responsive img-rounded hidden">
-            <img style="padding-bottom: 5px" id="pic4" src="#" class="img-responsive img-rounded hidden">
-            <img style="padding-bottom: 5px" id="pic5" src="#" class="img-responsive img-rounded hidden">
-            <img style="padding-bottom: 5px" id="pic6" src="#" class="img-responsive img-rounded hidden">
-            <img style="padding-bottom: 5px" id="pic7" src="#" class="img-responsive img-rounded hidden">
+            <img style="padding-bottom: 5px" id="pic1" src="#" class="img-responsive img-rounded piclistimg">
+            <img style="padding-bottom: 5px" id="pic2" src="#" class="img-responsive img-rounded piclistimg">
+            <img style="padding-bottom: 5px" id="pic3" src="#" class="img-responsive img-rounded piclistimg">
+            <img style="padding-bottom: 5px" id="pic4" src="#" class="img-responsive img-rounded piclistimg">
+            <img style="padding-bottom: 5px" id="pic5" src="#" class="img-responsive img-rounded piclistimg">
+            <img style="padding-bottom: 5px" id="pic6" src="#" class="img-responsive img-rounded piclistimg">
+            <img style="padding-bottom: 5px" id="pic7" src="#" class="img-responsive img-rounded piclistimg">
         </div>
 <!--        <div id="tuners" class="col-xs-1">
             <button type="button" class="centerri btn btn-info btn-sm" >Button</button>
@@ -101,7 +101,8 @@
             var NBR_OF_VISIBLE_PICS = 7;
             
             $(document).ready(function(){
-                deployPics(picArray);
+                hideAllPics(0);
+//                deployPics(picArray);
                 screenResized();
                 updateDropdownMenus();
             });
@@ -130,25 +131,31 @@
                     picsUp()
             });
             
-            $("img").click(function(){
+            $(".piclistimg").click(function(){
                 var src = $(this).attr("src");
                 bigImg = getPicObj(src);
-                screenResized()
+                $("#BigPic1").fadeOut(600);
+                setTimeout( function() {
+                    fadeInBigImg();
+                }, 625);
             });
     
-            $(".navig").click(function(){
-                $(".active.navig").removeClass("active");
-                $(this).addClass("active");
-            });
-
             $( "body" ).keydown(function( event ) {
               if ( event.which == 33 || event.which == 38 )
                  picsUp();
               if ( event.which == 34 || event.which == 40 )
                  picsDown();
             });
-            
-            function itemSelected(str) {
+
+            function fadeInBigImg() {
+                screenResized();
+                $("#BigPic1").fadeIn(1000);
+            }
+    
+            function picFolderSelected(str) {
+                $(".active.navig").removeClass("active");
+                $("#pics_navig_dd").addClass("active");
+
                 $.ajax({
                     url: "NewServlet/getdirimages",
                     type: "get",
@@ -169,8 +176,7 @@
             }
             
             $(window).resize(function() {screenResized()});
-        </script>
-        <script>
+            
             function picsDown() {
                 scrollPos++;
                 if(scrollPos >= picArray.length)
@@ -192,21 +198,26 @@
             }
             
             function deployPics(jsonData) {
-                hideAllSidePics();
-                for (x in jsonData) {
-                    var pic = jsonData[x];
-                    var aa = parseInt(x,10)+1;
-                    if(aa > NBR_OF_VISIBLE_PICS)
-                        break;
-                    $("#pic"+aa).attr("src", pic.src);
-                    $("#pic"+aa).removeClass("hidden");
-                }
+                hideAllPics(1000);
+                setTimeout( function() {
+                    for (x in jsonData) {
+                        var pic = jsonData[x];
+                        var aa = parseInt(x,10)+1;
+                        if(aa > NBR_OF_VISIBLE_PICS)
+                            break;
+                        $("#pic"+aa).attr("src", pic.src);
+                        $("#pic"+aa).fadeIn(1000);
+                    }
+                    bigImg = null;
+                    fadeInBigImg();
+                }, 1000);
             }
             
-            function hideAllSidePics() {
+            function hideAllPics(delay) {
                 var x = 1;
+                $("#BigPic1").fadeOut(delay);
                 for(;x<=NBR_OF_VISIBLE_PICS;x++)
-                    $("#pic"+x).addClass("hidden");
+                    $("#pic"+x).fadeOut(delay);
             }
             
         </script>
@@ -223,7 +234,7 @@
                             var str = data[x];
                             var name = str.slice(str.lastIndexOf('/')+1,str.length);
                             $("#pics_navig_dd > ul").append(
-                                    " <li onclick=\"itemSelected('"+str+" ')\" dirpath=\"" + str + "\" class=\"pic_selection\"><a href=\"#\">" + name +"</a></li>")
+                                    " <li onclick=\"picFolderSelected('"+str+" ')\" dirpath=\"" + str + "\" class=\"pic_selection\"><a href=\"#\">" + name +"</a></li>")
                         }
                     }
                     else{
@@ -297,6 +308,11 @@
 //            $("#pic3").removeClass("hidden");
 //            $("#pic4").attr("src", picArray[3].src);
 //            $("#pic4").removeClass("hidden");
+//            $(".navig").click(function(){
+//                $(".active.navig").removeClass("active");
+//                $(this).addClass("active");
+//            });
+
 
 
 -->
