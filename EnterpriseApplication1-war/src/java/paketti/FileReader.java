@@ -79,7 +79,7 @@ public class FileReader {
     protected static JSONObject getImgJson(String fileName) throws IOException {
         JSONObject obj = new JSONObject();
         BufferedImage bimg = ImageIO.read(new File(fileName));
-        obj.put("filename", changeDiskPathToUrl(fileName));
+        obj.put("src", changeDiskPathToUrl(fileName));
         obj.put("width",    bimg.getWidth());
         obj.put("height",   bimg.getHeight());
         return obj;
