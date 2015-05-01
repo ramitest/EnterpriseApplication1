@@ -27,6 +27,9 @@
                 background-color: black;
                 color: yellow;
             }
+/*            .piclistimg {
+                visibility: hidden;
+            }*/
         </style>
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/main.css">
@@ -100,15 +103,14 @@
         <script>
             var NBR_OF_VISIBLE_PICS = 7;
             var picArray = null;
+            var bigImg = null;
             var scrollPos = 0;
             
             $(document).ready(function(){
                 hideAllPics(0);
-//                deployPics(picArray);
                 screenResized();
                 updateDropdownMenus();
             });
-            var bigImg = null;
             
             function getPicObj(str) {
                 for(obj in picArray)
@@ -116,7 +118,6 @@
                         return picArray[obj];
             }
 
-            
             $('body').bind('mousewheel', function(e){
                 if(e.originalEvent.wheelDelta /120 < 0)
                     picsDown()
@@ -126,13 +127,8 @@
             
             $(".piclistimg").click(function(){
                 var src = $(this).attr("src");
-                if(bigImg.src == src)
-                    return;
-                bigImg = getPicObj(src);
-                $("#BigPic1").fadeOut(600);
-                setTimeout( function() {
-                    fadeInBigImg();
-                }, 625);
+                if(bigImg.src != src)
+                    bigImgSelectedFromPicList(src);
             });
     
             $( "body" ).keydown(function( event ) {
@@ -142,6 +138,17 @@
                  picsDown();
             });
 
+            function bigImgSelectedFromPicList(src) {
+                bigImg = getPicObj(src);
+                fadeOutBigImg(600);
+                setTimeout( function() {
+                    fadeInBigImg();
+                }, 625);
+            }
+
+            function fadeOutBigImg(delay) {
+                $("#BigPic1").fadeOut(delay);
+            }
             function fadeInBigImg() {
                 screenResized();
                 $("#BigPic1").fadeIn(1000);
@@ -187,32 +194,35 @@
             
             function scrollPics(scrollPosition) {
                 var x = 1;
-                for(;x<=picArray.length;x++)
+                for(; x <= picArray.length; x++)
                     if(x<=NBR_OF_VISIBLE_PICS)
                         $("#pic"+x).attr("src", picArray[((scrollPosition+(x-1))%picArray.length)].src);
             }
             
             function deployPics(jsonData) {
-                hideAllPics(1000);
+                var hidingTime = 1000;
+                if(bigImg == null)
+                    hidingTime = 0;
+                hideAllPics(hidingTime);
                 setTimeout( function() {
                     for (x in jsonData) {
                         var pic = jsonData[x];
-                        var aa = parseInt(x,10)+1;
-                        if(aa > NBR_OF_VISIBLE_PICS)
+                        var picIndex = parseInt(x,10)+1;
+                        if(picIndex > NBR_OF_VISIBLE_PICS)
                             break;
-                        $("#pic"+aa).attr("src", pic.src);
-                        $("#pic"+aa).fadeIn(1000);
+                        $("#pic"+picIndex).attr("src", pic.src);
+                        $("#pic"+picIndex).fadeIn(1000);
                     }
-                    bigImg = null;
                     fadeInBigImg();
-                }, 1000);
+                }, hidingTime);
             }
             
             function hideAllPics(delay) {
                 var x = 1;
-                $("#BigPic1").fadeOut(delay);
+                fadeOutBigImg(delay);
                 for(;x<=NBR_OF_VISIBLE_PICS;x++)
                     $("#pic"+x).fadeOut(delay);
+                bigImg = null;
             }
             
             function updateDropdownMenus() {
