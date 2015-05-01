@@ -99,6 +99,8 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.js"><\/script>')</script>
         <script>
             var NBR_OF_VISIBLE_PICS = 7;
+            var picArray = null;
+            var scrollPos = 0;
             
             $(document).ready(function(){
                 hideAllPics(0);
@@ -107,15 +109,6 @@
                 updateDropdownMenus();
             });
             var bigImg = null;
-            var picsText = '{"pics":[' +
-                '{"src":"img/db740c22af5ee9a54709bb39970eece2.jpg","width":"236","height":"354" },' +
-                '{"src":"img/images.jpg","width":"284","height":"177" },' +
-                '{"src":"img/depositphotos_4003251-Woman-guitarist.jpg","width":"1024","height":"1024" },' +
-                '{"src":"img/blonde woman.jpg","width":"465","height":"700" }]}';
-
-            var picArrayTemp = JSON.parse(picsText);
-            var picArray = picArrayTemp.pics;
-            var scrollPos = 0;
             
             function getPicObj(str) {
                 for(obj in picArray)
@@ -133,6 +126,8 @@
             
             $(".piclistimg").click(function(){
                 var src = $(this).attr("src");
+                if(bigImg.src == src)
+                    return;
                 bigImg = getPicObj(src);
                 $("#BigPic1").fadeOut(600);
                 setTimeout( function() {
@@ -220,9 +215,6 @@
                     $("#pic"+x).fadeOut(delay);
             }
             
-        </script>
-            
-        <script>
             function updateDropdownMenus() {
                 $.get( "NewServlet/getimagedirs", function( data ) {
                     if(data.length > 0) {
@@ -244,11 +236,11 @@
                 }, "json");
             }
             
-            
             function screenResized() {
-                if(bigImg == null) {
+                if( picArray == null )
+                    return;
+                if(bigImg == null)
                     bigImg = picArray[0];
-                }
 
                 $("#BigPic1").attr("src",bigImg.src);
                 var maxH = ($(window).height()-70);
@@ -312,6 +304,15 @@
 //                $(".active.navig").removeClass("active");
 //                $(this).addClass("active");
 //            });
+
+
+//            var picsText = '{"pics":[' +
+//                '{"src":"img/db740c22af5ee9a54709bb39970eece2.jpg","width":"236","height":"354" },' +
+//                '{"src":"img/images.jpg","width":"284","height":"177" },' +
+//                '{"src":"img/depositphotos_4003251-Woman-guitarist.jpg","width":"1024","height":"1024" },' +
+//                '{"src":"img/blonde woman.jpg","width":"465","height":"700" }]}';
+//            var picArrayTemp = JSON.parse(picsText);
+//            var picArray = picArrayTemp.pics;
 
 
 
