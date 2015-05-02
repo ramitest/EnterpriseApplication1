@@ -103,57 +103,15 @@
         <script>
             var NBR_OF_VISIBLE_PICS = 7;
             var picArray = null;
-            var bigImg = null;
-            var scrollPos = 0;
+            var bigPicObj = new BigPic();
+            var scroller = new Scroller()
             
             $(document).ready(function(){
                 hideAllPics(0);
-                screenResized();
                 updateDropdownMenus();
             });
+            $(window).resize(function() {bigPicObj.setBigPicSize()});
             
-            function getPicObj(str) {
-                for(obj in picArray)
-                    if(picArray[obj].src === str)
-                        return picArray[obj];
-            }
-
-            $('body').bind('mousewheel', function(e){
-                if(e.originalEvent.wheelDelta /120 < 0)
-                    picsDown()
-                else
-                    picsUp()
-            });
-            
-            $(".piclistimg").click(function(){
-                var src = $(this).attr("src");
-                if(bigImg.src != src)
-                    bigImgSelectedFromPicList(src);
-            });
-    
-            $( "body" ).keydown(function( event ) {
-              if ( event.which == 33 || event.which == 38 )
-                 picsUp();
-              if ( event.which == 34 || event.which == 40 )
-                 picsDown();
-            });
-
-            function bigImgSelectedFromPicList(src) {
-                bigImg = getPicObj(src);
-                fadeOutBigImg(600);
-                setTimeout( function() {
-                    fadeInBigImg();
-                }, 625);
-            }
-
-            function fadeOutBigImg(delay) {
-                $("#BigPic1").fadeOut(delay);
-            }
-            function fadeInBigImg() {
-                screenResized();
-                $("#BigPic1").fadeIn(1000);
-            }
-    
             function picFolderSelected(str) {
                 $(".active.navig").removeClass("active");
                 $("#pics_navig_dd").addClass("active");
@@ -177,31 +135,10 @@
                 });                
             }
             
-            $(window).resize(function() {screenResized()});
-            
-            function picsDown() {
-                scrollPos++;
-                if(scrollPos >= picArray.length)
-                    scrollPos = 0;
-                scrollPics(scrollPos);
-            }
-            function picsUp() {
-                scrollPos--;
-                if(scrollPos < 0)
-                    scrollPos = picArray.length-1;
-                scrollPics(scrollPos);
-            }
-            
-            function scrollPics(scrollPosition) {
-                var x = 1;
-                for(; x <= picArray.length; x++)
-                    if(x<=NBR_OF_VISIBLE_PICS)
-                        $("#pic"+x).attr("src", picArray[((scrollPosition+(x-1))%picArray.length)].src);
-            }
-            
             function deployPics(jsonData) {
                 var hidingTime = 1000;
-                if(bigImg == null)
+//                if(bigImg == null)
+                if(bigPicObj.imgNotSet())
                     hidingTime = 0;
                 hideAllPics(hidingTime);
                 setTimeout( function() {
@@ -213,27 +150,32 @@
                         $("#pic"+picIndex).attr("src", pic.src);
                         $("#pic"+picIndex).fadeIn(1000);
                     }
-                    fadeInBigImg();
+                    bigPicObj.setBigPic(null);
+                    bigPicObj.fadeInBigImg();
                 }, hidingTime);
             }
             
             function hideAllPics(delay) {
                 var x = 1;
-                fadeOutBigImg(delay);
+                bigPicObj.fadeOutBigImg(delay);
                 for(;x<=NBR_OF_VISIBLE_PICS;x++)
                     $("#pic"+x).fadeOut(delay);
-                bigImg = null;
             }
             
             function updateDropdownMenus() {
                 $.get( "NewServlet/getimagedirs", function( data ) {
-                    if(data.length > 0) {
+                    updatePicsDropDownMenu(data);
+                }, "json");
+            }
+            
+            function updatePicsDropDownMenu(jsonData) {
+                    if(jsonData.length > 0) {
                         $("#pics_navig").addClass("hidden");
                         $("#pics_navig_dd").removeClass("hidden");
                         $("#pics_navig_dd > ul").children().remove();
                         var x;
-                        for (x in data) {
-                            var str = data[x];
+                        for (x in jsonData) {
+                            var str = jsonData[x];
                             var name = str.slice(str.lastIndexOf('/')+1,str.length);
                             $("#pics_navig_dd > ul").append(
                                     " <li onclick=\"picFolderSelected('"+str+" ')\" dirpath=\"" + str + "\" class=\"pic_selection\"><a href=\"#\">" + name +"</a></li>")
@@ -243,25 +185,109 @@
                         $("#pics_navig").removeClass("hidden");
                         $("#pics_navig_dd").addClass("hidden");
                     }
-                }, "json");
             }
             
-            function screenResized() {
-                if( picArray == null )
-                    return;
-                if(bigImg == null)
-                    bigImg = picArray[0];
-
-                $("#BigPic1").attr("src",bigImg.src);
-                var maxH = ($(window).height()-70);
-                var maxW = $("#div1").prop("clientWidth")-10;
-                var aspRatH = maxH / bigImg.height;
-                var aspRatW = maxW / bigImg.width;
-                var aspRat = Math.min(aspRatH, aspRatW);
-                var str = ""+aspRatH+" , "+aspRatW+" , "+aspRat;
-                $("#BigPic1").css("height", bigImg.height * aspRat );
-                $("#BigPic1").css("width",  bigImg.width  * aspRat );
+            
+            /************ BIG PIC HANDLING *******************************/
+            function BigPic() {
+                this.bigImg = null;
+                this.bigImgSelectedFromPicList = function (src) {
+                    if(this.bigImg.src != src)
+                        this.changeBigPic(src);
+                }
+                this.imgNotSet = function () {
+                    return this.bigImg == null;
+                }
+                this.setBigPic = function (src) {
+                    if(src != null)
+                        this.bigImg = this.getPicObj(src);
+                    else
+                        if( picArray != null)
+                            if( picArray.length > 0)
+                                this.bigImg = picArray[0];
+                    $("#BigPic1").attr("src", this.bigImg.src);
+                    this.setBigPicSize();
+                }    
+                this.changeBigPic = function (src) {
+                    this.fadeOutBigImg(600);
+                    setTimeout( function() {
+                        bigPicObj.setBigPic(src);
+                        bigPicObj.fadeInBigImg();
+                    }, 625);
+                }
+                this.fadeInBigImg = function () {
+                    $("#BigPic1").fadeIn(1000);
+                }
+                this.fadeOutBigImg = function (delay) {
+                    $("#BigPic1").fadeOut(delay);
+                    this.bigImg = null;
+                }
+                this.getPicObj = function (str) {
+                    for(obj in picArray)
+                        if(picArray[obj].src === str)
+                            return picArray[obj];
+                }
+                this.setBigPicSize = function () {
+                    if( picArray == null )
+                        return;
+                    if(this.bigImg == null)
+                        return;
+                    var maxH = ($(window).height()-70);
+                    var maxW = $("#div1").prop("clientWidth")-10;
+                    var aspRatH = maxH / this.bigImg.height;
+                    var aspRatW = maxW / this.bigImg.width;
+                    var aspRat = Math.min(aspRatH, aspRatW);
+                    $("#BigPic1").css("height", this.bigImg.height * aspRat );
+                    $("#BigPic1").css("width",  this.bigImg.width  * aspRat );
+                }
             }
+            
+            /************ SCROLL PICS *******************************/
+            function Scroller() {
+                this.scrollPos = 0;
+                this.getInfo = function() {
+                    return this.color + ' ' + this.type + ' apple';
+                };
+                this.picsDown = function() {
+                    this.scrollPos++;
+                    if(this.scrollPos >= picArray.length)
+                        this.scrollPos = 0;
+                    this.scrollPics(this.scrollPos);
+                };
+                this.picsUp = function() {
+                    this.scrollPos--;
+                    if(this.scrollPos < 0)
+                        this.scrollPos = picArray.length-1;
+                    this.scrollPics(this.scrollPos);
+                };
+                this.scrollPics = function (scrollPosition) {
+                    var x = 1;
+                    for(; x <= picArray.length; x++)
+                        if(x<=NBR_OF_VISIBLE_PICS)
+                            $("#pic"+x).attr("src", picArray[((scrollPosition+(x-1))%picArray.length)].src);
+                }
+            }
+    
+            /************ EVENT HANDLERS *******************************/
+            $('body').bind('mousewheel', function(e){
+                if(e.originalEvent.wheelDelta /120 < 0)
+                    scroller.picsDown()
+                else
+                    scroller.picsUp()
+            });
+            $(".piclistimg").click(function(){
+                bigPicObj.bigImgSelectedFromPicList($(this).attr("src"));
+            });
+            $( "body" ).keydown(function( event ) {
+              if ( event.which == 33 || event.which == 38 )
+                 scroller.picsUp();
+              if ( event.which == 34 || event.which == 40 )
+                 scroller.picsDown();
+            });
+
+    
+    
+            
         </script>
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/main.js"></script>
