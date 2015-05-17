@@ -15,6 +15,8 @@ public class FileReader {
     public static String urlRootPath = System.getProperty("my.imgviewer.urlpathroot");
 
     public static JSONArray getSubPathsOfPicsDirs() throws IOException {
+        System.out.println("imgRootDir:"+imgRootDir);
+        System.out.println("urlRootPath:"+urlRootPath);
         if( isDir(Paths.get(imgRootDir)) )
             for(Path dir : getDirStream(Paths.get(imgRootDir)))
                 if( dir.endsWith(PICS_DIR) )
