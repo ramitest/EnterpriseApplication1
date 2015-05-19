@@ -29,11 +29,18 @@ public class NewServlet extends HttpServlet {
             String pathInfo = request.getPathInfo();
             switch ( pathInfo.toLowerCase() ) {
                 case "/getimagedirs":
-                    out.println( FileReader.getSubPathsOfPicsDirs() );
+                    out.println( new ImageReader().getSubPathsOfPicsDirs() );
                     break;
                 case "/getdirimages":
                     String dir = request.getParameter("directory");
-                    out.println(FileReader.getPicsFromDir(dir, false));
+                    out.println(new ImageReader().getPicsFromDir(dir, false));
+                    break;
+                case "/getvideodirs":
+//                    out.println( FileReader.getSubPathsOfVidsDirs() );
+                    break;
+                case "/getdirvideos":
+//                    String dir = request.getParameter("directory");
+//                    out.println(FileReader.getVidsFromDir(dir, false));
                     break;
             }
         }
