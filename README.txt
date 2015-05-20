@@ -1,8 +1,7 @@
 http://localhost:8080/EnterpriseApplication1-war/NewServlet/getimagedirs
 http://localhost:8080/EnterpriseApplication1-war/NewServlet/getdirimages?directory=pics\/pics02
 
-
-
+http://localhost:8080/EnterpriseApplication1-war/NewServlet/getvideodirs
 
 Glassfish:::
 my.imgviewer.imgdir  C:\VBox\shared_fedora\imgviewer\

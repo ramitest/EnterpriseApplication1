@@ -11,7 +11,7 @@ import org.json.simple.*;
 public class VideoReader extends AbstractReader {
 
     public JSONArray getSubPathsOfVidsDirs() throws IOException {
-        return getSubPathsDirs(getPicsDir());
+        return getSubPathsDirs(getVidsDir());
     }
 
     public JSONArray getVidsFromDir(String imgDir, boolean fullPath) throws IOException {
@@ -26,10 +26,7 @@ public class VideoReader extends AbstractReader {
     @Override
     protected JSONObject getJsonObject(String fileName) throws IOException {
         JSONObject obj = new JSONObject();
-        BufferedImage bimg = ImageIO.read(new File(fileName));
         obj.put("src", changeDiskPathToUrl(fileName));
-        obj.put("width",    bimg.getWidth());
-        obj.put("height",   bimg.getHeight());
         return obj;
     }
 }

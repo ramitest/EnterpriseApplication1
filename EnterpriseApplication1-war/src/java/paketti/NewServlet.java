@@ -36,11 +36,11 @@ public class NewServlet extends HttpServlet {
                     out.println(new ImageReader().getPicsFromDir(dir, false));
                     break;
                 case "/getvideodirs":
-//                    out.println( FileReader.getSubPathsOfVidsDirs() );
+                    out.println(new VideoReader().getSubPathsOfVidsDirs() );
                     break;
                 case "/getdirvideos":
-//                    String dir = request.getParameter("directory");
-//                    out.println(FileReader.getVidsFromDir(dir, false));
+                    dir = request.getParameter("directory");
+                    out.println(new VideoReader().getVidsFromDir(dir, false));
                     break;
             }
         }

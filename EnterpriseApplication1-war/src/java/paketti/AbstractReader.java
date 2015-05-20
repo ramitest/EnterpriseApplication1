@@ -98,6 +98,7 @@ public abstract class AbstractReader {
         System.out.println("urlRootPath:" + urlRootPath);
         if (isDir(Paths.get(getMediaFilesRootDir()))) {
             for (Path dir : getDirStream(Paths.get(getMediaFilesRootDir()))) {
+                System.out.println(dir);
                 if (dir.endsWith(subDir)) {
                     return getDirListing(dir);
                 }
