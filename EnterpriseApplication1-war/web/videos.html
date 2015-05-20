@@ -1,9 +1,15 @@
 <!doctype html>
     <head>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">-->
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="bower_components/mediaelement/build/mediaelementplayer.css" />
         <style>
             body {
                 padding-top: 60px;
@@ -20,88 +26,51 @@
                 color: yellow;
             }
         </style>
-        <link rel="apple-touch-icon" href="apple-touch-icon.png">
-        <link rel="stylesheet" href="css/main.css">
-        <link rel="stylesheet" href="bower_components/mediaelement/build/mediaelementplayer.css" />
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     </head>
+    
     <body>
-        
-    <nav  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#" id="headeri">Media</a>
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mediamenus">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span> 
-            </button>
-        </div>
-        <div class="collapse navbar-collapse" id="mediamenus">
-            <ul class="nav navbar-nav">
-                
-                <li id="pics_navig_dd">
-                    <a href="images.html">Pictures</a>
-                </li>
-                
-                <li class="dropdown navig">
-                  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Videos
-                  <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li class="pic_selection"><a href="#">Page 1-1</a></li>
-                    <li><a href="#">Page 1-2</a></li>
-                    <li><a href="#">Page 1-3</a></li> 
-                  </ul>
-                </li>
-                
-              
-              
-            </ul>
-        </div>
-      </div>
-    </nav>
-
-    <div class="container-fluid">
-      <div class="row">
-        <div id="divVids" class="col-xs-10">
-            <video src="http://localhost:8080/imgviewer/vids/vidi03/Clip_480_5sec_6mbps_h264.mp4" controls style="width: 100%; height: 100%;"></video>        
-        </div>
-        <div id="vidlist" class="col-xs-2">
-            <ol>
-                <!--<li ng-repeat="country in countries">-->
-                <li >
-                    OOOO
-<!--                     {{ 'Country: ' + country.name }}-->
-                </li>
-            </ol>
-<!--            <img style="padding-bottom: 5px" id="vid1" src="#" class="img-responsive img-rounded piclistimg">
-            <img style="padding-bottom: 5px" id="vid2" src="#" class="img-responsive img-rounded piclistimg">-->
-        </div>
-      </div>
-    </div>
+        <nav  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="" id="headeri">Videos</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mediamenus">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> 
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="mediamenus">
+                <ul class="nav navbar-nav">
+                    <li id="pics_navig_dd">
+                        <a href="images.html">Pictures</a>
+                    </li>
+                    <li class="active dropdown">
+                      <a class="dropdown-toggle" data-toggle="dropdown" href="">Videos
+                          <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li><a href="">Page 1-1</a></li>
+                        <li><a href="">Page 1-2</a></li>
+                      </ul>
+                    </li>
+                </ul>
+            </div>
+          </div>
+        </nav>
 
     <div ng-app="" ng-init="marks=['img/images.jpg']">
         <div ng-repeat="x in marks">
             <p> {{"joo:" + x +":jee"}} </p>
-            <!--<img style="padding-bottom: 5px" id="vid2" src={{x}} class="img-responsive img-rounded">-->
+            <img style="padding-bottom: 5px" id="vid2" src={{x}} class="img-responsive img-rounded">
         </div>
     </div>
  
 <!--    <video src="http://www.w3schools.com/html/movie.mp4"></video>        -->
-        
-        
-
-        
-    <!-- /container -->        
-<!--        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.2.js"><\/script>');</script>-->
-        
+        <script src="js/vendor/jquery-1.11.2.js"></script>
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/vendor/angular.js"></script>
-        <script src="js/vendor/jquery-1.11.2.js"></script>
         <script src="bower_components/mediaelement/build/mediaelement-and-player.js"></script>
-        <script src="js/video_main.js"></script>
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>       
         
         <script>
             $(document).ready(function(){
