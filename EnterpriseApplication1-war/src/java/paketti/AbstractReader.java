@@ -46,6 +46,7 @@ public abstract class AbstractReader {
     }
 
     protected static String replaceSlashtoBSlash(String str) {
+        System.out.println("replaceSlashtoBSlash::::" +str);
         return str.replace("/", "\\");
     }
 
@@ -128,6 +129,7 @@ public abstract class AbstractReader {
     protected abstract List<String> getMediaFileEnds();
 
     public JSONArray getMediaFilesFromDir(String mediaDir, boolean fullPath) throws IOException {
+        System.out.println(mediaDir);
         if (false == fullPath) {
             mediaDir = addBSlashToEnd(getMediaFilesRootDir()) + replaceSlashtoBSlash(mediaDir);
         }

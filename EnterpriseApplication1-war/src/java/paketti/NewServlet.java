@@ -27,6 +27,8 @@ public class NewServlet extends HttpServlet {
 
         try (PrintWriter out = response.getWriter()) {
             String pathInfo = request.getPathInfo();
+            System.out.println(request.getRequestURL());
+            System.out.println(pathInfo);
             switch ( pathInfo.toLowerCase() ) {
                 case "/getimagedirs":
                     out.println( new ImageReader().getSubPathsOfPicsDirs() );

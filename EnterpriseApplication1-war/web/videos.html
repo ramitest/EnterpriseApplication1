@@ -6,7 +6,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <link rel="stylesheet" href="css/bootstrap.min.css">
-        <!--<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">-->
         <link rel="stylesheet" href="css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="bower_components/mediaelement/build/mediaelementplayer.css" />
@@ -15,7 +14,7 @@
                 padding-top: 60px;
                 padding-bottom: 10px;
                 background-color: black;
-                overflow: hidden;
+                /*overflow: hidden;*/
             }
             .centerri {
                 margin-left: auto;
@@ -28,56 +27,95 @@
         </style>
     </head>
     
-    <body>
+    <body ng-app="myNavMenu" ng-controller="myNavMenuCont">
         <nav  class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-          <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="" id="headeri">Videos</a>
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mediamenus">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span> 
-                </button>
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="" id="headeri">Videos</a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mediamenus">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span> 
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse" id="mediamenus">
+                    <ul class="nav navbar-nav">
+                        <li id="pics_navig_dd">
+                            <a href="images.html">Pictures</a>
+                        </li>
+                        <li class="active dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="">Videos
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <div ng-repeat="path in imgs">
+                                    <li ng-click="menuClick(path)">
+                                        <a href="">{{path.slice(path.lastIndexOf('/')+1,path.length)}}</a>
+                                    </li>
+                                </div>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div class="collapse navbar-collapse" id="mediamenus">
-                <ul class="nav navbar-nav">
-                    <li id="pics_navig_dd">
-                        <a href="images.html">Pictures</a>
-                    </li>
-                    <li class="active dropdown">
-                      <a class="dropdown-toggle" data-toggle="dropdown" href="">Videos
-                          <span class="caret"></span>
-                      </a>
-                      <ul class="dropdown-menu">
-                        <li><a href="">Page 1-1</a></li>
-                        <li><a href="">Page 1-2</a></li>
-                      </ul>
-                    </li>
-                </ul>
-            </div>
-          </div>
         </nav>
 
-    <div ng-app="" ng-init="marks=['img/images.jpg']">
-        <div ng-repeat="x in marks">
-            <p> {{"joo:" + x +":jee"}} </p>
-            <img style="padding-bottom: 5px" id="vid2" src={{x}} class="img-responsive img-rounded">
-        </div>
-    </div>
- 
-<!--    <video src="http://www.w3schools.com/html/movie.mp4"></video>        -->
+        <div class="container-fluid">
+            <div class="row">
+                <div id="div1" class="col-xs-8" style="overflow: hidden;">
+                    <!--<video src="http://www.w3schools.com/html/movie.mp4"></video>-->
+                    <!--<video src="http://localhost:8080/imgviewer/vids/vidi03/Clip_480_5sec_6mbps_h264.mp4" controls style="width: 100%; height: 100%;"></video>-->
+                    <div id="vidPlayer" hidden>
+                        <video src="http://localhost:8080/imgviewer/vids/vidi03/Clip_480_5sec_6mbps_h264.mp4" controls style="width: 100%; height: 100%;"></video>
+                    </div>
+                </div>
+                <div id="vidlist" class="col-xs-4">
+                    <div ng-repeat="vid in videoList">
+                        <button type="button" class="btn btn-default" style="background: black; width: 100%" ng-click="videoSelected(vid)" hidden> {{vid.src.slice(vid.src.lastIndexOf('/')+1,vid.src.length)}} </button>
+                    </div>
+                </div>
+            </div>
+        </div>        
+
         <script src="js/vendor/jquery-1.11.2.js"></script>
         <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/vendor/angular.js"></script>
         <script src="bower_components/mediaelement/build/mediaelement-and-player.js"></script>
-        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>       
+        <script src="js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
+        <script src="js/utils.js"></script>
         
         <script>
             $(document).ready(function(){
                 $('video').mediaelementplayer({});
             });
-
+            
+            var app = angular.module('myNavMenu', []);
+            app.controller('myNavMenuCont', function($scope, $http) {
+                $http.get("NewServlet/getvideodirs")
+                    .success(function(response) {
+                        $scope.imgs = response;
+                    });
+                $scope.menuClick = function(path) {
+                    $http.get("NewServlet/getdirvideos?directory="+path)
+                        .success(function(response) {
+                            $scope.videoList = response;
+                        });
+                };
+                $scope.videoSelected = function(video) {
+                    $("#vidPlayer").fadeOut(1000);
+                    setTimeout( function() {
+                        $("video").attr("src", video.src);
+                        $("#vidPlayer").fadeIn(1000);
+                    }, 1000);
+                }
+                $scope.mouseDown = function() {
+                    alert("AAAA");
+                }
+                
+                
+            });
         </script>
     </body>
 </html>
 
+<!--    <video src="http://www.w3schools.com/html/movie.mp4"></video>        -->
