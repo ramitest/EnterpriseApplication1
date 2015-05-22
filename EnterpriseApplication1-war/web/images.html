@@ -44,7 +44,7 @@
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">Images
                         <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li class="pic_selection"><a href="#">aaahh</a></li>
+                            <!--<li class="pic_selection"><a href="#">aaahh</a></li>-->
                         </ul>
                     </li>
 
@@ -160,7 +160,7 @@
                             var str = jsonData[x];
                             var name = str.slice(str.lastIndexOf('/')+1,str.length);
                             $("#pics_navig_dd > ul").append(
-                                    " <li onclick=\"picFolderSelected('"+str+" ')\" dirpath=\"" + str + "\" class=\"pic_selection\"><a href=\"#\">" + name +"</a></li>");
+                                    " <li onclick=\"picFolderSelected('"+str+" ')\" dirpath=\"" + str + "\" class=\"pic_selection\"><a href='#' style='color: grey'>" + name +"</a></li>");
                         }
                     }
 //                    else{

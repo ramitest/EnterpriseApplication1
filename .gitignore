@@ -3,3 +3,9 @@
 /dist/
 /EnterpriseApplication1-war/web/imgviewer/
 /EnterpriseApplication1-war/web/img/
+/nbproject/private/
+/EnterpriseApplication1-war/nbproject/private/
+/EnterpriseApplication1-ejb/nbproject/private/
+/EnterpriseApplication1-war/build/
+/EnterpriseApplication1-ejb/dist/
+/EnterpriseApplication1-ejb/build/
