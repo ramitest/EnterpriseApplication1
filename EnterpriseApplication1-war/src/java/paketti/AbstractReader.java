@@ -91,6 +91,8 @@ public abstract class AbstractReader {
 
     protected static String changeDiskPathToUrl(String fileName) {
         String subPath = getSubPathFromDiskFullPath(fileName, getMediaFilesRootDir());
+//        "http://"+ localhost+":"+8080+"/imgviewer/";
+        
         return urlRootPath + subPath;
     }
 

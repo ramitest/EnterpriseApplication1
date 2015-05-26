@@ -29,6 +29,7 @@ public class NewServlet extends HttpServlet {
             String pathInfo = request.getPathInfo();
             System.out.println(request.getRequestURL());
             System.out.println(pathInfo);
+            System.out.println("Host n Port:: "+request.getServerName()+":"+request.getServerPort());
             switch ( pathInfo.toLowerCase() ) {
                 case "/getimagedirs":
                     out.println( new ImageReader().getSubPathsOfPicsDirs() );
